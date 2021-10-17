@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: postgres
+    username: postgres
+    url: jdbc:postgresql://127.0.0.1:5432/postgres
+#  devtools:
+#    restart:
+#      enabled: false#mybatis
+mybatis:
+  type-aliases-package: com.example.GrandWorldG.entity
+  mapper-locations:  classpath:/mapper/*Mapper.xml
+#  mapper、model采用mybatis-generator-core自动解析数据库生成
+#  gradle构建时src/main/java目录下的非.java结尾的文件不会被编译，所以需要将myabtis对应的xml文件移至resources目录，并在application.yaml文件配置路径

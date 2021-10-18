@@ -1,8 +1,6 @@
 package com.example.GrandWorldG.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
@@ -17,7 +15,7 @@ import java.sql.Timestamp;
 @Setter
 public class UserInfo {
 
-    private String id;
+    private String userId;
 
     private String username;
 
@@ -25,5 +23,5 @@ public class UserInfo {
 
     private Timestamp createTime;
 
-    private Timestamp updateTime ;
+    private Timestamp lastUpdateTime ;
 }

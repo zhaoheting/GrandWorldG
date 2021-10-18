@@ -2,6 +2,7 @@ package com.example.GrandWorldG.mapper;
 
 import com.example.GrandWorldG.entity.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 
 /**
@@ -19,5 +20,5 @@ public interface UserInfoMapper {
      * @author HeTing.Zhao
      * @since 2021/10/17
      **/
-    UserInfo selectUserInfoByUserId(int userId);
+    UserInfo selectUserInfoByUserId(@Param("userId") Long userId);
 }

@@ -26,6 +26,7 @@ spring:
 #    restart:
 #      enabled: false#mybatis
 mybatis:
+  # type-aliases-package批量设置别名作用：就是在mapper.xml文件中直接写类名，不配置就需要写类的全路径名
   type-aliases-package: com.example.GrandWorldG.entity
   mapper-locations:  classpath:/mapper/*Mapper.xml
 #  mapper、model采用mybatis-generator-core自动解析数据库生成

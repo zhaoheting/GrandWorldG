@@ -39,6 +39,12 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    public List<UserInfo> getAllUserInfo() {
+        List<UserInfo> userInfoList = userInfoMapper.selectAllUserInfo();
+        return userInfoList;
+    }
+
+    @Override
     @Transactional
     /**
      * There are three methods for patch insertion,
@@ -47,13 +53,13 @@ public class UserInfoServiceImpl implements UserInfoService {
      * Insertion with a for loop should be used with few inserted data.
      * Jointing a sql sentence is the worst choice. Never Use it. sql server will throw an exception when the sql length is too long.
      */
-    public Long patchInsertUserInfo() {
+    public void patchInsertUserInfo() {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
         UserInfoMapper patchUserInfoMapper = sqlSession.getMapper(UserInfoMapper.class);
         List<UserInfo> insertedUserInfoList = buildUserInfoList();
-        long insertedCount = 0L;
         for (int i = 0, size = insertedUserInfoList.size(); i < size; ++i) {
-            insertedCount += patchUserInfoMapper.insertUserInfo(insertedUserInfoList.get(i));
+            //The return value is not the amount of inserted data.
+            patchUserInfoMapper.insertUserInfo(insertedUserInfoList.get(i));
             //Commit the session every 500 amount of data in case of out of memory.
             if (i % 500 == 499) {
                 sqlSession.commit();
@@ -63,7 +69,21 @@ public class UserInfoServiceImpl implements UserInfoService {
         //Commit all the left data.
         sqlSession.commit();
         sqlSession.clearCache();
-        return insertedCount;
+    }
+
+    @Override
+    public UserInfo insertUserInfo(UserInfo userInfo) {
+//        Random random = new Random();
+//        UserInfo userInfo = new UserInfo();
+//        //Generated username randomly.
+//        userInfo.setUsername((char) (random.nextInt(25) + 97) + "" + (char) (random.nextInt(25) + 97));
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        userInfo.setCreateTime(currentTime);
+//        userInfo.setPassword(UUID.randomUUID().toString());
+        userInfo.setLastUpdateTime(currentTime);
+        int result = userInfoMapper.insertUserInfo(userInfo);
+        System.out.print(result);
+        return userInfo;
     }
 
     /**
@@ -74,10 +94,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     private List<UserInfo> buildUserInfoList() {
         List<UserInfo> insertedUserInfoList = new ArrayList<>();
         Random random = new Random();
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 10; ++i) {
             UserInfo userInfo = new UserInfo();
             //Generated username randomly.
-            userInfo.setUsername((char) (random.nextInt(25) + 97) + "" + (char) (random.nextInt(25) + 97));
+            userInfo.setUsername((char) (random.nextInt(25) + 97) + String.valueOf(random.nextInt(100)) + (char) (random.nextInt(25) + 97));
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             userInfo.setCreateTime(currentTime);
             userInfo.setPassword(UUID.randomUUID().toString());

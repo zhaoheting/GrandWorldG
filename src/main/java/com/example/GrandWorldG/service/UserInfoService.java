@@ -2,6 +2,8 @@ package com.example.GrandWorldG.service;
 
 import com.example.GrandWorldG.entity.UserInfo;
 
+import java.util.List;
+
 /**
  * TODO
  *
@@ -11,5 +13,9 @@ import com.example.GrandWorldG.entity.UserInfo;
 public interface UserInfoService {
     UserInfo getUserInfoByUserId(Long id);
 
-    Long patchInsertUserInfo();
+    List<UserInfo> getAllUserInfo();
+
+    void patchInsertUserInfo();
+
+    UserInfo insertUserInfo(UserInfo userInfo);
 }

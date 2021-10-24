@@ -4,6 +4,8 @@ import com.example.GrandWorldG.entity.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 
 /**
  * User info mapper.
@@ -21,6 +23,12 @@ public interface UserInfoMapper {
      * @since 2021/10/17
      **/
     UserInfo selectUserInfoByUserId(@Param("userId") Long userId);
+
+    /**
+     *
+     * @return
+     */
+    List<UserInfo> selectAllUserInfo();
 
     /**
      *

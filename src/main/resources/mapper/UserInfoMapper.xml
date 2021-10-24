@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.GrandWorldG.mapper.UserInfoMapper">
     <!-- type of resultMap usually is a model customized by developer. -->
-    <resultMap id="userInfoModel" type="com.example.GrandWorldG.entity.UserInfo">
+    <resultMap id="userInfoModel" type="UserInfo">
         <!-- jdbcType of result is a data type of database. -->
         <result column="user_id" property="userId" jdbcType="BIGINT"/>
         <result column="username" property="username" jdbcType="VARCHAR"/>
@@ -16,11 +16,15 @@
         from travel_fly.user_info
         where user_id = #{userId,jdbcType=BIGINT}
     </select>
+    <select id="selectAllUserInfo" resultMap="userInfoModel">
+        select user_id,username,password,create_time,last_update_time
+        from travel_fly.user_info
+    </select>
     <!--  jdbcType must be uppercase.  -->
     <!--  Column name of the primary key doesn't need to be written
     either in the column name or values, unless the key needs to be generated manually.  -->
     <!--  The primary key of postgre database must be defined as "serial" or it can not be generated automatically.  -->
-    <insert id="insertUserInfo" keyProperty="userId" parameterType="com.example.GrandWorldG.entity.UserInfo"
+    <insert id="insertUserInfo" keyProperty="userId" parameterType="UserInfo"
             useGeneratedKeys="true">
         insert into travel_fly.user_info
         (username,password,create_time,last_update_time)

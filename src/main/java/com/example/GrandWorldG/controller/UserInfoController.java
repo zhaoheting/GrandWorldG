@@ -1,11 +1,14 @@
 package com.example.GrandWorldG.controller;
 
 import com.example.GrandWorldG.entity.UserInfo;
+import com.example.GrandWorldG.model.PageableModel;
 import com.example.GrandWorldG.service.UserInfoService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * TODO
@@ -23,8 +26,21 @@ public class UserInfoController {
         return userInfoService.getUserInfoByUserId(userId);
     }
 
-    @GetMapping("/patchInsert")
-    public Long patchInsertUserInfo() {
-        return userInfoService.patchInsertUserInfo();
+    @GetMapping("/users")
+    public PageInfo<UserInfo> getAllUserInfoInPage(PageableModel<UserInfo> pageableModel){
+        PageHelper.startPage(pageableModel.getPageNum(),pageableModel.getPageSize());
+        List<UserInfo> userInfoList = userInfoService.getAllUserInfo();
+        return new PageInfo<>(userInfoList);
     }
+
+    @PostMapping("/userPatch")
+    public void patchInsertUserInfo() {
+        userInfoService.patchInsertUserInfo();
+    }
+
+    @PostMapping("/user")
+    public UserInfo insertUserInfo(@RequestBody UserInfo userInfo){
+        return userInfoService.insertUserInfo(userInfo);
+    }
+
 }

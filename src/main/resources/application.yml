@@ -20,7 +20,7 @@ spring:
       driver-class-name: org.postgresql.Driver
       password: postgres
       username: postgres
-      url: jdbc:postgresql://127.0.0.1:5432/postgres
+      url: jdbc:postgresql://localhost:5432/postgres
       type: com.alibaba.druid.pool.DruidDataSource
 #  devtools:
 #    restart:

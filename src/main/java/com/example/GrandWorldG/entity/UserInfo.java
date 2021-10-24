@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @Setter
 public class UserInfo {
 
-    private String userId;
+    private Long userId;
 
     private String username;
 

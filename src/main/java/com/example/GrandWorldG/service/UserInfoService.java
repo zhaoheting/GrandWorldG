@@ -10,4 +10,6 @@ import com.example.GrandWorldG.entity.UserInfo;
  **/
 public interface UserInfoService {
     UserInfo getUserInfoByUserId(Long id);
+
+    Long patchInsertUserInfo();
 }

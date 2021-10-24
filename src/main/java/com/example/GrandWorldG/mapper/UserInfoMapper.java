@@ -21,4 +21,11 @@ public interface UserInfoMapper {
      * @since 2021/10/17
      **/
     UserInfo selectUserInfoByUserId(@Param("userId") Long userId);
+
+    /**
+     *
+     * @param userInfo
+     * @return
+     */
+    int insertUserInfo(UserInfo userInfo);
 }

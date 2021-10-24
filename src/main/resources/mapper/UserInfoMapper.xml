@@ -16,10 +16,23 @@
         from travel_fly.user_info
         where user_id = #{userId,jdbcType=BIGINT}
     </select>
-<!--    <insert id="" keyProperty="" parameterType="" useGeneratedKeys="true">-->
-<!--    </insert>-->
-<!--    <update id="" parameterType="">-->
-<!--    </update>-->
-<!--    <delete id="" parameterType="">-->
-<!--    </delete>-->
+    <!--  jdbcType must be uppercase.  -->
+    <!--  Column name of the primary key doesn't need to be written
+    either in the column name or values, unless the key needs to be generated manually.  -->
+    <!--  The primary key of postgre database must be defined as "serial" or it can not be generated automatically.  -->
+    <insert id="insertUserInfo" keyProperty="userId" parameterType="com.example.GrandWorldG.entity.UserInfo"
+            useGeneratedKeys="true">
+        insert into travel_fly.user_info
+        (username,password,create_time,last_update_time)
+        values(
+        #{username,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{lastUpdateTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <!--    <update id="" parameterType="">-->
+    <!--    </update>-->
+    <!--    <delete id="" parameterType="">-->
+    <!--    </delete>-->
 </mapper>

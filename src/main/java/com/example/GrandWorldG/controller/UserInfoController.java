@@ -22,4 +22,9 @@ public class UserInfoController {
     public UserInfo getUserById(@PathVariable("userId") Long userId) {
         return userInfoService.getUserInfoByUserId(userId);
     }
+
+    @GetMapping("/patchInsert")
+    public Long patchInsertUserInfo() {
+        return userInfoService.patchInsertUserInfo();
+    }
 }

@@ -33,7 +33,7 @@ public class UserInfoController {
         return new PageInfo<>(userInfoList);
     }
 
-    @PostMapping("/userPatch")
+    @GetMapping("/userPatch")
     public void patchInsertUserInfo() {
         userInfoService.patchInsertUserInfo();
     }

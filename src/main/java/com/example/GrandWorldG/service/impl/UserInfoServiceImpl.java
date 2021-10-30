@@ -1,5 +1,6 @@
 package com.example.GrandWorldG.service.impl;
 
+import com.example.GrandWorldG.constants.CommonConstants;
 import com.example.GrandWorldG.entity.UserInfo;
 import com.example.GrandWorldG.mapper.UserInfoMapper;
 import com.example.GrandWorldG.service.UserInfoService;
@@ -13,7 +14,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 /**
  * TODO
@@ -53,13 +53,12 @@ public class UserInfoServiceImpl implements UserInfoService {
      * Insertion with a for loop should be used with few inserted data.
      * Jointing a sql sentence is the worst choice. Never Use it. sql server will throw an exception when the sql length is too long.
      */
-    public void patchInsertUserInfo() {
+    public void patchInsertUserInfo(List<UserInfo> userInfoList) {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
         UserInfoMapper patchUserInfoMapper = sqlSession.getMapper(UserInfoMapper.class);
-        List<UserInfo> insertedUserInfoList = buildUserInfoList();
-        for (int i = 0, size = insertedUserInfoList.size(); i < size; ++i) {
+        for (int i = 0, size = userInfoList.size(); i < size; ++i) {
             //The return value is not the amount of inserted data.
-            patchUserInfoMapper.insertUserInfo(insertedUserInfoList.get(i));
+            patchUserInfoMapper.insertUserInfo(userInfoList.get(i));
             //Commit the session every 500 amount of data in case of out of memory.
             if (i % 500 == 499) {
                 sqlSession.commit();
@@ -73,16 +72,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfo insertUserInfo(UserInfo userInfo) {
-//        Random random = new Random();
-//        UserInfo userInfo = new UserInfo();
-//        //Generated username randomly.
-//        userInfo.setUsername((char) (random.nextInt(25) + 97) + "" + (char) (random.nextInt(25) + 97));
-        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-        userInfo.setCreateTime(currentTime);
-//        userInfo.setPassword(UUID.randomUUID().toString());
-        userInfo.setLastUpdateTime(currentTime);
         int result = userInfoMapper.insertUserInfo(userInfo);
-        System.out.print(result);
+        if (result != 1) {
+            throw new RuntimeException("Failed to create the user account.");
+        }
         return userInfo;
     }
 
@@ -97,11 +90,13 @@ public class UserInfoServiceImpl implements UserInfoService {
         for (int i = 0; i < 10; ++i) {
             UserInfo userInfo = new UserInfo();
             //Generated username randomly.
-            userInfo.setUsername((char) (random.nextInt(25) + 97) + String.valueOf(random.nextInt(100)) + (char) (random.nextInt(25) + 97));
+            String username = (char) (random.nextInt(25) + 97) + String.valueOf(random.nextInt(100)) + (char) (random.nextInt(25) + 97);
+            userInfo.setUsername(username);
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             userInfo.setCreateTime(currentTime);
-            userInfo.setPassword(UUID.randomUUID().toString());
+            userInfo.setPassword(username);
             userInfo.setLastUpdateTime(currentTime);
+            userInfo.setDomainUsername(CommonConstants.DOMAIN_USERNAME);
             insertedUserInfoList.add(userInfo);
         }
         return insertedUserInfoList;

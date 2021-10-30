@@ -15,7 +15,7 @@ public interface UserInfoService {
 
     List<UserInfo> getAllUserInfo();
 
-    void patchInsertUserInfo();
+    void patchInsertUserInfo(List<UserInfo> userInfoList);
 
     UserInfo insertUserInfo(UserInfo userInfo);
 }

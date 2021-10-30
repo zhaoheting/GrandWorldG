@@ -1,6 +1,13 @@
 package com.example.GrandWorldG.util;
 
-import java.util.Random;
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 /**
  * Encryption and decryption with AES algorithm.
@@ -13,19 +20,91 @@ import java.util.Random;
  */
 public class AesUtils {
 
-    public static byte[] encryptInEcb(String value, String secretKey) {
+    //Get a random byte array whose length is 16.
+    public static final byte[] INITIALIZATION_VECTOR = CommonUtils.getRandomByteArray(16);
+    //Secret key for advanced encryption standard.
+    public static final byte[] SECRET_KEY = CommonUtils.getRandomByteArray(16);
+    public static final String AES_CBC_PADDING = "AES/CBC/PKCS5Padding";
 
+//    public static byte[] encryptInEcb(String value, String secretKey) {
+//
+//    }
+//
+//    public static String decryptInEcb() {
+//
+//    }
+
+    /**
+     * Encrypt {@code value} in designated pattern.
+     *
+     * @param value Value will be encrypted.
+     * @return {@link byte[]} A encrypted byte array.
+     */
+    public static String encryptInCbc(String value) {
+        String encryptedValue = "";
+        try {
+            Cipher cipher = Cipher.getInstance(AES_CBC_PADDING);
+            SecretKey secretKey = new SecretKeySpec(SECRET_KEY, "AES");
+            IvParameterSpec iv = new IvParameterSpec(INITIALIZATION_VECTOR);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+            encryptedValue = new String(Base64.getEncoder().encode(cipher.doFinal(value.getBytes(StandardCharsets.UTF_8))));
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException |
+                InvalidKeyException | InvalidAlgorithmParameterException |
+                IllegalBlockSizeException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return encryptedValue;
     }
 
-    public static String decryptInEcb() {
-
+    /**
+     * Decrypt a value encoded by base64.
+     *
+     * @param value a value encrypted by aes and then encoded by base64.
+     * @return {@link String} A readable string.
+     */
+    public static String decryptInCbc(String value) {
+        String decryptedValue = "";
+        try {
+            Cipher cipher = Cipher.getInstance(AES_CBC_PADDING);
+            SecretKey secretKey = new SecretKeySpec(SECRET_KEY, "AES");
+            IvParameterSpec iv = new IvParameterSpec(INITIALIZATION_VECTOR);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+            decryptedValue = new String(cipher.doFinal(Base64.getDecoder().decode(value)));
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException |
+                InvalidAlgorithmParameterException | InvalidKeyException |
+                IllegalBlockSizeException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return decryptedValue;
     }
 
-    public static byte[] encryptInCbc(String value, String secretKey,) {
-
+    /**
+     * Generate a secret key that is encrypted by the designated algorithm.
+     * Sometimes the secret key need to be encrypted and then transformed.
+     *
+     * @param algorithm
+     * @return
+     */
+    public static byte[] generateAesSecretKey(String algorithm) {
+        byte[] encodedKey = null;
+        try {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance(algorithm);
+            keyGenerator.init(128);
+            encodedKey = keyGenerator.generateKey().getEncoded();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return encodedKey;
     }
 
-    public static String decryptInCbc() {
-
+    /**
+     * Decrypt the secret key.
+     *
+     * @param encryptedSecretKey Secret key that is encrypted by an algorithm.
+     * @param algorithm
+     * @return
+     */
+    public static SecretKey decryptSecretKey(byte[] encryptedSecretKey, String algorithm) {
+        return new SecretKeySpec(encryptedSecretKey, algorithm);
     }
 }

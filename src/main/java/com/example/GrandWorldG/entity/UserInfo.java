@@ -23,5 +23,7 @@ public class UserInfo {
 
     private Timestamp createTime;
 
-    private Timestamp lastUpdateTime ;
+    private Timestamp lastUpdateTime;
+
+    private String domainUsername;
 }

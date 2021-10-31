@@ -14,6 +14,9 @@ import java.util.Base64;
  * There are five kinds of encryption patterns, including ECB "Electronic codebook"
  * and CBC "Cipher-block chaining" and so on.
  * CBC pattern need an initialization vector.
+ * <p>
+ * Encrypt or decrypt in database server must has two preconditions: 1.Data must be transformed in https. 2.Admin of DB must believable.
+ * So sometimes we need to do this two operations in java code.
  *
  * @author Hobbs.Heting.Zhao
  * @since 10/29/2021
@@ -25,14 +28,6 @@ public class AesUtils {
     //Secret key for advanced encryption standard.
     public static final byte[] SECRET_KEY = CommonUtils.getRandomByteArray(16);
     public static final String AES_CBC_PADDING = "AES/CBC/PKCS5Padding";
-
-//    public static byte[] encryptInEcb(String value, String secretKey) {
-//
-//    }
-//
-//    public static String decryptInEcb() {
-//
-//    }
 
     /**
      * Encrypt {@code value} in designated pattern.

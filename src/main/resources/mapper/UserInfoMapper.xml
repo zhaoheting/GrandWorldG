@@ -15,7 +15,7 @@
     <select id="selectUserInfoByUserId" parameterType="java.lang.Long" resultMap="userInfoModel">
         select user_id,
         username,
-        convert_from(decrypt(password::bytea,domain_username::bytea,'aes'),'SQL_ASCII') password,
+        convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
         create_time,
         last_update_time,
         domain_username
@@ -26,7 +26,7 @@
         select user_id,
         username,
         <!--  Show how to use decryption function of postgre's extension pgcrypto.  -->
-        convert_from(decrypt(password::bytea,domain_username::bytea,'aes'),'SQL_ASCII') password,
+        convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
         create_time,
         last_update_time,
         domain_username
@@ -45,7 +45,7 @@
         <!-- Show how to use encryption function of postgre's extension pgcrypto.
         Here we use domain username as secret key.
         Aes is the encryption algorithm. -->
-        encrypt(#{password,jdbcType=VARCHAR}::bytea,#{domainUsername}::bytea,'aes'),
+        encrypt(#{password,jdbcType=VARCHAR}::bytea,#{domainUsername}::bytea,'AES'),
         current_timestamp,
         current_timestamp,
         #{domainUsername,jdbcType=VARCHAR}

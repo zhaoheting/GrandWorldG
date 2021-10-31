@@ -4,7 +4,7 @@ import com.example.GrandWorldG.entity.UserInfo;
 
 import java.util.List;
 
-/**
+/*
  * User info interface.
  *
  * @author HeTing.Zhao

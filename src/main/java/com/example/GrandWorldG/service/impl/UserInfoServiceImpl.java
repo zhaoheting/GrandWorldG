@@ -1,6 +1,5 @@
 package com.example.GrandWorldG.service.impl;
 
-import com.example.GrandWorldG.constants.CommonConstants;
 import com.example.GrandWorldG.entity.UserInfo;
 import com.example.GrandWorldG.mapper.UserInfoMapper;
 import com.example.GrandWorldG.service.UserInfoService;
@@ -11,13 +10,10 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-/**
- * TODO
+/*
+ * Implementation of {@link UserInfoService}.
  *
  * @author HeTing.Zhao
  * @since 2021/10/17
@@ -26,7 +22,6 @@ import java.util.Random;
 public class UserInfoServiceImpl implements UserInfoService {
 
     private final UserInfoMapper userInfoMapper;
-
     private final SqlSessionFactory sqlSessionFactory;
 
     public UserInfoServiceImpl(UserInfoMapper userInfoMapper, SqlSessionFactory sqlSessionFactory) {
@@ -61,7 +56,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 sqlSession.clearCache();
             }
         }
-        //Commit all the left data.
+        //Commit all the remaining data.
         sqlSession.commit();
         sqlSession.clearCache();
     }
@@ -76,33 +71,20 @@ public class UserInfoServiceImpl implements UserInfoService {
         return userInfo;
     }
 
-    /**
-     * Build a user info list for testing batch insertion.
+    /*
+     * Encrypt essential properties of user info.
      *
-     * @return
+     * @param userInfo
      */
-    private List<UserInfo> buildUserInfoList() {
-        List<UserInfo> insertedUserInfoList = new ArrayList<>();
-        Random random = new Random();
-        for (int i = 0; i < 10; ++i) {
-            UserInfo userInfo = new UserInfo();
-            //Generated username randomly.
-            String username = (char) (random.nextInt(25) + 97) + String.valueOf(random.nextInt(100)) + (char) (random.nextInt(25) + 97);
-            userInfo.setUsername(username);
-            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            userInfo.setCreateTime(currentTime);
-            userInfo.setPassword(username);
-            userInfo.setLastUpdateTime(currentTime);
-            userInfo.setDomainUsername(CommonConstants.DOMAIN_USERNAME);
-            insertedUserInfoList.add(userInfo);
-        }
-        return insertedUserInfoList;
-    }
-
     private void encryptUserInfo(UserInfo userInfo) {
         userInfo.setSocialSecurityNumber(AesUtils.encryptInCbc(userInfo.getSocialSecurityNumber()));
     }
 
+    /*
+     * Decrypt essential properties of user info.
+     *
+     * @param userInfo
+     */
     private void decryptUserInfo(UserInfo userInfo) {
         userInfo.setSocialSecurityNumber(AesUtils.decryptInCbc(userInfo.getSocialSecurityNumber()));
     }

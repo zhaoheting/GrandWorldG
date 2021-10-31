@@ -9,7 +9,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-/**
+/*
  * Encryption and decryption with AES algorithm.
  * There are five kinds of encryption patterns, including ECB "Electronic codebook"
  * and CBC "Cipher-block chaining" and so on.

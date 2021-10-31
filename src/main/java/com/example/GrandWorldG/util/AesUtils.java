@@ -27,7 +27,9 @@ public class AesUtils {
     public static final byte[] INITIALIZATION_VECTOR = CommonUtils.getRandomByteArray(16);
     //Secret key for advanced encryption standard.
     public static final byte[] SECRET_KEY = CommonUtils.getRandomByteArray(16);
-    public static final String AES_CBC_PADDING = "AES/CBC/PKCS5Padding";
+    public static final String ENCRYPT_ALGORITHM = "AES";
+    public static final String ENCRYPT_PATTERN = "CBC";
+    public static final String ENCRYPT_PADDING = "PKCS5Padding";
 
     /**
      * Encrypt {@code value} in designated pattern.
@@ -38,8 +40,8 @@ public class AesUtils {
     public static String encryptInCbc(String value) {
         String encryptedValue = "";
         try {
-            Cipher cipher = Cipher.getInstance(AES_CBC_PADDING);
-            SecretKey secretKey = new SecretKeySpec(SECRET_KEY, "AES");
+            Cipher cipher = Cipher.getInstance(ENCRYPT_ALGORITHM + "/" + ENCRYPT_PATTERN + "/" + ENCRYPT_PADDING);
+            SecretKey secretKey = new SecretKeySpec(SECRET_KEY, ENCRYPT_ALGORITHM);
             IvParameterSpec iv = new IvParameterSpec(INITIALIZATION_VECTOR);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
             encryptedValue = new String(Base64.getEncoder().encode(cipher.doFinal(value.getBytes(StandardCharsets.UTF_8))));
@@ -60,8 +62,8 @@ public class AesUtils {
     public static String decryptInCbc(String value) {
         String decryptedValue = "";
         try {
-            Cipher cipher = Cipher.getInstance(AES_CBC_PADDING);
-            SecretKey secretKey = new SecretKeySpec(SECRET_KEY, "AES");
+            Cipher cipher = Cipher.getInstance(ENCRYPT_ALGORITHM + "/" + ENCRYPT_PATTERN + "/" + ENCRYPT_PADDING);
+            SecretKey secretKey = new SecretKeySpec(SECRET_KEY, ENCRYPT_ALGORITHM);
             IvParameterSpec iv = new IvParameterSpec(INITIALIZATION_VECTOR);
             cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
             decryptedValue = new String(cipher.doFinal(Base64.getDecoder().decode(value)));
@@ -80,7 +82,7 @@ public class AesUtils {
      * @param algorithm
      * @return
      */
-    public static byte[] generateAesSecretKey(String algorithm) {
+    private static byte[] generateAesSecretKey(String algorithm) {
         byte[] encodedKey = null;
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance(algorithm);
@@ -99,7 +101,7 @@ public class AesUtils {
      * @param algorithm
      * @return
      */
-    public static SecretKey decryptSecretKey(byte[] encryptedSecretKey, String algorithm) {
+    private static SecretKey decryptSecretKey(byte[] encryptedSecretKey, String algorithm) {
         return new SecretKeySpec(encryptedSecretKey, algorithm);
     }
 }

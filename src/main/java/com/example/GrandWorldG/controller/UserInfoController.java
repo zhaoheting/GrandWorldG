@@ -42,5 +42,4 @@ public class UserInfoController {
     public UserInfo insertUserInfo(@RequestBody UserInfo userInfo) {
         return userInfoService.insertUserInfo(userInfo);
     }
-
 }

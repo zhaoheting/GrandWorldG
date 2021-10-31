@@ -10,6 +10,7 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="last_update_time" property="lastUpdateTime" jdbcType="TIMESTAMP"/>
         <result column="domain_Username" property="domainUsername" jdbcType="VARCHAR"/>
+        <result column="social_security_number" property="socialSecurityNumber" jdbcType="VARCHAR"/>
     </resultMap>
     <!-- parameterType of select can be a customized model or a primitive type. -->
     <select id="selectUserInfoByUserId" parameterType="java.lang.Long" resultMap="userInfoModel">
@@ -18,7 +19,8 @@
         convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
         create_time,
         last_update_time,
-        domain_username
+        domain_username,
+        social_security_number
         from travel_fly.user_info
         where user_id = #{userId,jdbcType=BIGINT}
     </select>
@@ -29,7 +31,8 @@
         convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
         create_time,
         last_update_time,
-        domain_username
+        domain_username,
+        social_security_number
         from travel_fly.user_info
     </select>
     <!--  jdbcType must be uppercase.  -->
@@ -39,7 +42,7 @@
     <insert id="insertUserInfo" keyProperty="userId" parameterType="UserInfo"
             useGeneratedKeys="true">
         insert into travel_fly.user_info
-        (username,password,create_time,last_update_time,domain_username)
+        (username,password,create_time,last_update_time,domain_username,social_security_number)
         values(
         #{username,jdbcType=VARCHAR},
         <!-- Show how to use encryption function of postgre's extension pgcrypto.
@@ -48,7 +51,8 @@
         encrypt(#{password,jdbcType=VARCHAR}::bytea,#{domainUsername}::bytea,'AES'),
         current_timestamp,
         current_timestamp,
-        #{domainUsername,jdbcType=VARCHAR}
+        #{domainUsername,jdbcType=VARCHAR},
+        #{socialSecurityNumber,jdbcType=VARCHAR}
         )
     </insert>
     <!--    <update id="" parameterType="">-->

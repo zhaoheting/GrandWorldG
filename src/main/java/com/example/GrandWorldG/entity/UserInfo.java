@@ -26,4 +26,6 @@ public class UserInfo {
     private Timestamp lastUpdateTime;
 
     private String domainUsername;
+
+    private String socialSecurityNumber;
 }

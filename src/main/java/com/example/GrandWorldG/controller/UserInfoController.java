@@ -5,10 +5,17 @@ import com.example.GrandWorldG.model.PageableModel;
 import com.example.GrandWorldG.service.UserInfoService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@link UserInfo} controller.
@@ -27,10 +34,13 @@ public class UserInfoController {
     }
 
     @GetMapping("/users")
-    public PageInfo<UserInfo> getAllUserInfoInPage(PageableModel<UserInfo> pageableModel) {
+    public ResponseEntity<PageInfo<UserInfo>> getAllUserInfoInPage(PageableModel<UserInfo> pageableModel) {
         PageHelper.startPage(pageableModel.getPageNum(), pageableModel.getPageSize());
         List<UserInfo> userInfoList = userInfoService.getAllUserInfo();
-        return new PageInfo<>(userInfoList);
+        PageInfo<UserInfo> pageInfo =  new PageInfo(userInfoList);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Access-Control-Allow-Origin", "*");
+        return ResponseEntity.ok().headers(headers).body(pageInfo);
     }
 
     @PostMapping("/usersInsertion")

@@ -23,10 +23,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     private final UserInfoMapper userInfoMapper;
     private final SqlSessionFactory sqlSessionFactory;
+    private final ConfigService configService;
 
-    public UserInfoServiceImpl(UserInfoMapper userInfoMapper, SqlSessionFactory sqlSessionFactory) {
+    public UserInfoServiceImpl(UserInfoMapper userInfoMapper, SqlSessionFactory sqlSessionFactory,
+                               ConfigService configService) {
         this.userInfoMapper = userInfoMapper;
         this.sqlSessionFactory = sqlSessionFactory;
+        this.configService = configService;
     }
 
     @Override

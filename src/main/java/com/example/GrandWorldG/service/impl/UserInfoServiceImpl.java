@@ -77,7 +77,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param userInfo
      */
     private void encryptUserInfo(UserInfo userInfo) {
-        userInfo.setSocialSecurityNumber(AesUtils.encryptInCbc(userInfo.getSocialSecurityNumber()));
+        userInfo.setSocialSecurityNumber(AesUtils.encryptInCbc(userInfo.getSocialSecurityNumber(), userInfo.getDomainUsername()));
     }
 
     /*
@@ -86,6 +86,6 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param userInfo
      */
     private void decryptUserInfo(UserInfo userInfo) {
-        userInfo.setSocialSecurityNumber(AesUtils.decryptInCbc(userInfo.getSocialSecurityNumber()));
+        userInfo.setSocialSecurityNumber(AesUtils.decryptInCbc(userInfo.getSocialSecurityNumber(), userInfo.getDomainUsername()));
     }
 }

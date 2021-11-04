@@ -19,11 +19,13 @@ import java.util.Map;
 
 /**
  * {@link UserInfo} controller.
+ * Cross origin annotation is used to solve cross domain issues. It is effective than setting headers for response.
  *
  * @author HeTing.Zhao
  * @since 2021/10/17
  **/
 @RestController
+@CrossOrigin(value = "http://localhost:4200")
 public class UserInfoController {
     @Autowired
     public UserInfoService userInfoService;
@@ -37,10 +39,8 @@ public class UserInfoController {
     public ResponseEntity<PageInfo<UserInfo>> getAllUserInfoInPage(PageableModel<UserInfo> pageableModel) {
         PageHelper.startPage(pageableModel.getPageNum(), pageableModel.getPageSize());
         List<UserInfo> userInfoList = userInfoService.getAllUserInfo();
-        PageInfo<UserInfo> pageInfo =  new PageInfo(userInfoList);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Access-Control-Allow-Origin", "*");
-        return ResponseEntity.ok().headers(headers).body(pageInfo);
+        PageInfo<UserInfo> pageInfo = new PageInfo(userInfoList);
+        return ResponseEntity.ok().body(pageInfo);
     }
 
     @PostMapping("/usersInsertion")
@@ -49,7 +49,8 @@ public class UserInfoController {
     }
 
     @PostMapping("/userInsertion")
-    public UserInfo insertUserInfo(@RequestBody UserInfo userInfo) {
-        return userInfoService.insertUserInfo(userInfo);
+    public ResponseEntity<UserInfo> insertUserInfo(@RequestBody UserInfo userInfo) {
+        UserInfo insertedUser = userInfoService.insertUserInfo(userInfo);
+        return ResponseEntity.ok().body(insertedUser);
     }
 }

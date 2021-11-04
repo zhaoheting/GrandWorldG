@@ -20,12 +20,14 @@ import java.util.Map;
 /**
  * {@link UserInfo} controller.
  * Cross origin annotation is used to solve cross domain issues. It is effective than setting headers for response.
+ * But we need to add this annotation for every controller.
+ * There is a better approach that override "addCorsMappings‘ method of interface "WebMvcConfigurer".
  *
  * @author HeTing.Zhao
  * @since 2021/10/17
  **/
 @RestController
-@CrossOrigin(value = "http://localhost:4200")
+//@CrossOrigin(value = "http://localhost:4200")
 public class UserInfoController {
     @Autowired
     public UserInfoService userInfoService;

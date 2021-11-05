@@ -32,11 +32,11 @@ public class UserInfoController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<PageInfo<UserInfo>> getAllUserInfoInPage(PageableModel<UserInfo> pageableModel) {
+    public PageInfo<UserInfo> getAllUserInfoInPage(PageableModel<UserInfo> pageableModel) {
         PageHelper.startPage(pageableModel.getPageNum(), pageableModel.getPageSize());
         List<UserInfo> userInfoList = userInfoService.getAllUserInfo();
         PageInfo<UserInfo> pageInfo = new PageInfo<>(userInfoList);
-        return ResponseEntity.ok().body(pageInfo);
+        return pageInfo;
     }
 
     @PostMapping("/usersInsertion")
@@ -45,8 +45,8 @@ public class UserInfoController {
     }
 
     @PostMapping("/userInsertion")
-    public ResponseEntity<UserInfo> insertUserInfo(@RequestBody UserInfo userInfo) {
+    public UserInfo insertUserInfo(@RequestBody UserInfo userInfo) {
         UserInfo insertedUser = userInfoService.insertUserInfo(userInfo);
-        return ResponseEntity.ok().body(insertedUser);
+        return insertedUser;
     }
 }

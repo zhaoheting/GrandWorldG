@@ -9,6 +9,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Objects;
 
 /*
  * Encryption and decryption with AES algorithm.
@@ -26,7 +27,7 @@ import java.util.Base64;
 public class AesUtils {
 
     //Get a random byte array whose length is 16.
-    public static final byte[] INITIALIZATION_VECTOR = CommonUtils.getRandomByteArray(16);
+    public static final byte[] INITIALIZATION_VECTOR = "hozhahozhahozha1".getBytes(StandardCharsets.UTF_8);
     //Secret key for advanced encryption standard.
     public static final String ENCRYPT_ALGORITHM = "AES";
     public static final String ENCRYPT_PATTERN = "CBC";
@@ -44,15 +45,9 @@ public class AesUtils {
     public static String encryptInCbc(String value, String secretKeySeed) {
         String encryptedValue = "";
         try {
-            Cipher cipher = Cipher.getInstance(ENCRYPT_ALGORITHM + "/" + ENCRYPT_PATTERN + "/" + ENCRYPT_PADDING);
-            byte[] encodedKey = generateAesSecretKey(secretKeySeed);
-            SecretKey secretKey = new SecretKeySpec(encodedKey, ENCRYPT_ALGORITHM);
-            IvParameterSpec iv = new IvParameterSpec(INITIALIZATION_VECTOR);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-            encryptedValue = new String(Base64.getEncoder().encode(cipher.doFinal(value.getBytes(StandardCharsets.UTF_8))));
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException |
-                InvalidKeyException | InvalidAlgorithmParameterException |
-                IllegalBlockSizeException | BadPaddingException e) {
+            Cipher cipher = generateCipher(Cipher.ENCRYPT_MODE, secretKeySeed);
+            encryptedValue = new String(Base64.getEncoder().encode(Objects.requireNonNull(cipher).doFinal(value.getBytes(StandardCharsets.UTF_8))));
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
         return encryptedValue;
@@ -68,14 +63,10 @@ public class AesUtils {
     public static String decryptInCbc(String value, String secretKeySeed) {
         String decryptedValue = "";
         try {
-            Cipher cipher = Cipher.getInstance(ENCRYPT_ALGORITHM + "/" + ENCRYPT_PATTERN + "/" + ENCRYPT_PADDING);
-            byte[] encodedKey = generateAesSecretKey(secretKeySeed);
-            IvParameterSpec iv = new IvParameterSpec(INITIALIZATION_VECTOR);
-            cipher.init(Cipher.DECRYPT_MODE, decryptSecretKey(encodedKey), iv);
+            Cipher cipher = generateCipher(Cipher.DECRYPT_MODE, secretKeySeed);
+            assert cipher != null;
             decryptedValue = new String(cipher.doFinal(Base64.getDecoder().decode(value)));
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException |
-                InvalidAlgorithmParameterException | InvalidKeyException |
-                IllegalBlockSizeException | BadPaddingException e) {
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
         return decryptedValue;
@@ -86,30 +77,33 @@ public class AesUtils {
      * Sometimes the secret key need to be encrypted and then transformed.
      *
      * @param secretKeySeed A customised seed that is used to generate a key.
+     * @param mode
      * @return A secret key.
      */
-    private static byte[] generateAesSecretKey(String secretKeySeed) {
-        byte[] encodedKey = null;
+    private static Cipher generateCipher(int mode, String secretKeySeed) {
+        Cipher cipher;
         try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance(ENCRYPT_ALGORITHM);
-            //SecureRandom 实现完全随操作系统本身的內部状态，除非调用方在调用 getInstance 方法之后又调用了 setSeed 方法；
-            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-            secureRandom.setSeed(secretKeySeed.getBytes(StandardCharsets.UTF_8));
-            keyGenerator.init(128, secureRandom);
-            encodedKey = keyGenerator.generateKey().getEncoded();
-        } catch (NoSuchAlgorithmException e) {
+            cipher = Cipher.getInstance(ENCRYPT_ALGORITHM + "/" + ENCRYPT_PATTERN + "/" + ENCRYPT_PADDING);
+            byte[] secretKey = generateSecretKey(secretKeySeed);
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey, ENCRYPT_ALGORITHM);
+            //Here we choose to define iv and secret key into same value. I am not sure this is a perfect choice.
+            IvParameterSpec iv = new IvParameterSpec(secretKey);
+            cipher.init(mode, secretKeySpec, iv);
+            return cipher;
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException |
+                InvalidAlgorithmParameterException | InvalidKeyException e) {
             e.printStackTrace();
         }
-        return encodedKey;
+        return null;
     }
 
-    /**
-     * Decrypt the secret key.
-     *
-     * @param encryptedSecretKey Secret key that is encrypted by an algorithm.
-     * @return A secret key.
-     */
-    private static SecretKey decryptSecretKey(byte[] encryptedSecretKey) {
-        return new SecretKeySpec(encryptedSecretKey, ENCRYPT_ALGORITHM);
+    private static byte[] generateSecretKey(String secretKeySeed) throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(ENCRYPT_ALGORITHM);
+        //SecureRandom 实现完全随操作系统本身的內部状态，除非调用方在调用 getInstance 方法之后又调用了 setSeed 方法；
+        //使用随机方法生成的密钥为什么每次都一样呢？
+        SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+        secureRandom.setSeed(secretKeySeed.getBytes(StandardCharsets.UTF_8));
+        keyGenerator.init(128, secureRandom);
+        return keyGenerator.generateKey().getEncoded();
     }
 }

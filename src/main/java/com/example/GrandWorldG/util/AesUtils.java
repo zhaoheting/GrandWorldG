@@ -77,7 +77,7 @@ public class AesUtils {
      * Sometimes the secret key need to be encrypted and then transformed.
      *
      * @param secretKeySeed A customised seed that is used to generate a key.
-     * @param mode
+     * @param mode          What is the purpose of using this cipher, such as encryption and decryption.
      * @return A secret key.
      */
     private static Cipher generateCipher(int mode, String secretKeySeed) {
@@ -97,10 +97,16 @@ public class AesUtils {
         return null;
     }
 
+    /**
+     * Generate a secret key by a seed.
+     * SecureRandom 实现完全随操作系统本身的內部状态，除非调用方在调用 getInstance 方法之后又调用了 setSeed 方法；
+     * TODO 使用随机方法生成的密钥为什么每次都一样呢？
+     *
+     * @param secretKeySeed Seed Here we choose to use the info of the encrypted data.
+     * @return {@link byte[]}
+     */
     private static byte[] generateSecretKey(String secretKeySeed) throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(ENCRYPT_ALGORITHM);
-        //SecureRandom 实现完全随操作系统本身的內部状态，除非调用方在调用 getInstance 方法之后又调用了 setSeed 方法；
-        //使用随机方法生成的密钥为什么每次都一样呢？
         SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
         secureRandom.setSeed(secretKeySeed.getBytes(StandardCharsets.UTF_8));
         keyGenerator.init(128, secureRandom);

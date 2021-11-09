@@ -9,15 +9,31 @@
         <result column="password" property="password" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="last_update_time" property="lastUpdateTime" jdbcType="TIMESTAMP"/>
+        <result column="domain_Username" property="domainUsername" jdbcType="VARCHAR"/>
+        <result column="social_security_number" property="socialSecurityNumber" jdbcType="VARCHAR"/>
     </resultMap>
     <!-- parameterType of select can be a customized model or a primitive type. -->
     <select id="selectUserInfoByUserId" parameterType="java.lang.Long" resultMap="userInfoModel">
-        select user_id,username,password,create_time,last_update_time
+        select user_id,
+        username,
+        <!-- Line below will throw an error when we use a postgre DB in version 13. But it runs correctly in version 14.-->
+        convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
+        create_time,
+        last_update_time,
+        domain_username,
+        social_security_number
         from travel_fly.user_info
         where user_id = #{userId,jdbcType=BIGINT}
     </select>
     <select id="selectAllUserInfo" resultMap="userInfoModel">
-        select user_id,username,password,create_time,last_update_time
+        select user_id,
+        username,
+        <!--  Show how to use decryption function of postgre's extension pgcrypto.  -->
+        convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
+        create_time,
+        last_update_time,
+        domain_username,
+        social_security_number
         from travel_fly.user_info
     </select>
     <!--  jdbcType must be uppercase.  -->
@@ -27,12 +43,17 @@
     <insert id="insertUserInfo" keyProperty="userId" parameterType="UserInfo"
             useGeneratedKeys="true">
         insert into travel_fly.user_info
-        (username,password,create_time,last_update_time)
+        (username,password,create_time,last_update_time,domain_username,social_security_number)
         values(
         #{username,jdbcType=VARCHAR},
-        #{password,jdbcType=VARCHAR},
-        #{createTime,jdbcType=TIMESTAMP},
-        #{lastUpdateTime,jdbcType=TIMESTAMP}
+        <!-- Show how to use encryption function of postgre's extension pgcrypto.
+        Here we use domain username as secret key.
+        Aes is the encryption algorithm. -->
+        encrypt(#{password,jdbcType=VARCHAR}::bytea,#{domainUsername}::bytea,'AES'),
+        current_timestamp,
+        current_timestamp,
+        #{domainUsername,jdbcType=VARCHAR},
+        #{socialSecurityNumber,jdbcType=VARCHAR}
         )
     </insert>
     <!--    <update id="" parameterType="">-->

@@ -3,20 +3,17 @@ package com.example.GrandWorldG.service.impl;
 import com.example.GrandWorldG.entity.UserInfo;
 import com.example.GrandWorldG.mapper.UserInfoMapper;
 import com.example.GrandWorldG.service.UserInfoService;
+import com.example.GrandWorldG.util.AesUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
-/**
- * TODO
+/*
+ * Implementation of {@link UserInfoService}.
  *
  * @author HeTing.Zhao
  * @since 2021/10/17
@@ -25,12 +22,14 @@ import java.util.UUID;
 public class UserInfoServiceImpl implements UserInfoService {
 
     private final UserInfoMapper userInfoMapper;
-
     private final SqlSessionFactory sqlSessionFactory;
+    private final ConfigService configService;
 
-    public UserInfoServiceImpl(UserInfoMapper userInfoMapper, SqlSessionFactory sqlSessionFactory) {
+    public UserInfoServiceImpl(UserInfoMapper userInfoMapper, SqlSessionFactory sqlSessionFactory,
+                               ConfigService configService) {
         this.userInfoMapper = userInfoMapper;
         this.sqlSessionFactory = sqlSessionFactory;
+        this.configService = configService;
     }
 
     @Override
@@ -41,69 +40,55 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public List<UserInfo> getAllUserInfo() {
         List<UserInfo> userInfoList = userInfoMapper.selectAllUserInfo();
+        userInfoList.forEach(this::decryptUserInfo);
         return userInfoList;
     }
 
     @Override
     @Transactional
-    /**
-     * There are three methods for patch insertion,
-     * including batch insertion in one single sql session as below.
-     * the other two are insertion with a for loop, and jointing a sql sentence.
-     * Insertion with a for loop should be used with few inserted data.
-     * Jointing a sql sentence is the worst choice. Never Use it. sql server will throw an exception when the sql length is too long.
-     */
-    public void patchInsertUserInfo() {
+    public void patchInsertUserInfo(List<UserInfo> userInfoList) {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
         UserInfoMapper patchUserInfoMapper = sqlSession.getMapper(UserInfoMapper.class);
-        List<UserInfo> insertedUserInfoList = buildUserInfoList();
-        for (int i = 0, size = insertedUserInfoList.size(); i < size; ++i) {
+        for (int i = 0, size = userInfoList.size(); i < size; ++i) {
             //The return value is not the amount of inserted data.
-            patchUserInfoMapper.insertUserInfo(insertedUserInfoList.get(i));
+            encryptUserInfo(userInfoList.get(i));
+            patchUserInfoMapper.insertUserInfo(userInfoList.get(i));
             //Commit the session every 500 amount of data in case of out of memory.
             if (i % 500 == 499) {
                 sqlSession.commit();
                 sqlSession.clearCache();
             }
         }
-        //Commit all the left data.
+        //Commit all the remaining data.
         sqlSession.commit();
         sqlSession.clearCache();
     }
 
     @Override
     public UserInfo insertUserInfo(UserInfo userInfo) {
-//        Random random = new Random();
-//        UserInfo userInfo = new UserInfo();
-//        //Generated username randomly.
-//        userInfo.setUsername((char) (random.nextInt(25) + 97) + "" + (char) (random.nextInt(25) + 97));
-        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-        userInfo.setCreateTime(currentTime);
-//        userInfo.setPassword(UUID.randomUUID().toString());
-        userInfo.setLastUpdateTime(currentTime);
+        encryptUserInfo(userInfo);
         int result = userInfoMapper.insertUserInfo(userInfo);
-        System.out.print(result);
+        if (result != 1) {
+            throw new RuntimeException("Failed to create the user account.");
+        }
         return userInfo;
     }
 
-    /**
-     * Build a user info list for testing batch insertion.
+    /*
+     * Encrypt essential properties of user info.
      *
-     * @return
+     * @param userInfo
      */
-    private List<UserInfo> buildUserInfoList() {
-        List<UserInfo> insertedUserInfoList = new ArrayList<>();
-        Random random = new Random();
-        for (int i = 0; i < 10; ++i) {
-            UserInfo userInfo = new UserInfo();
-            //Generated username randomly.
-            userInfo.setUsername((char) (random.nextInt(25) + 97) + String.valueOf(random.nextInt(100)) + (char) (random.nextInt(25) + 97));
-            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            userInfo.setCreateTime(currentTime);
-            userInfo.setPassword(UUID.randomUUID().toString());
-            userInfo.setLastUpdateTime(currentTime);
-            insertedUserInfoList.add(userInfo);
-        }
-        return insertedUserInfoList;
+    private void encryptUserInfo(UserInfo userInfo) {
+        userInfo.setSocialSecurityNumber(AesUtils.encryptInCbc(userInfo.getSocialSecurityNumber(), userInfo.getDomainUsername()));
+    }
+
+    /*
+     * Decrypt essential properties of user info.
+     *
+     * @param userInfo
+     */
+    private void decryptUserInfo(UserInfo userInfo) {
+        userInfo.setSocialSecurityNumber(AesUtils.decryptInCbc(userInfo.getSocialSecurityNumber(), userInfo.getDomainUsername()));
     }
 }

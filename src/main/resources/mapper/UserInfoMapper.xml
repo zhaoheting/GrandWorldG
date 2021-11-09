@@ -16,6 +16,7 @@
     <select id="selectUserInfoByUserId" parameterType="java.lang.Long" resultMap="userInfoModel">
         select user_id,
         username,
+        <!-- Line below will throw an error when we use a postgre DB in version 13. But it runs correctly in version 14.-->
         convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
         create_time,
         last_update_time,

@@ -47,11 +47,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication().passwordEncoder(new PasswordEncoderImpl())
                 .withUser("root")
                 .password("root")
-                .roles("USER")
+                .roles("ADMIN")
                 .and()
                 .withUser("admin")
                 .password("admin")
-                .roles("ADMIN", "USER");
+                .roles("ADMIN", "USER")
+                .and()
+                .withUser("user")
+                .password("user")
+                .roles("USER");
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class UserInfoController {
     }
 
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public PageInfo<UserInfo> getAllUserInfoInPage(PageableModel<UserInfo> pageableModel) {
         PageHelper.startPage(pageableModel.getPageNum(), pageableModel.getPageSize());
         List<UserInfo> userInfoList = userInfoService.getAllUserInfo();

@@ -1,19 +1,26 @@
 package com.example.GrandWorldG.entity;
 
+import com.example.GrandWorldG.enums.UserRoleEnum;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-/**
- * User info entity.
+/*
+ * User info entity that is used for security authentication.
  *
- * @author HeTing.Zhao
- * @since 2021/10/17
- **/
+ * @since 11/12/2021
+ * @author Hobbs.Heting.Zhao
+ */
 @Getter
 @Setter
-public class UserInfo {
+public class UserInfo implements UserDetails {
 
     private Long userId;
 
@@ -28,4 +35,33 @@ public class UserInfo {
     private String domainUsername;
 
     private String socialSecurityNumber;
+
+    private UserRoleEnum role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorityList = new ArrayList<>();
+        authorityList.add(new SimpleGrantedAuthority(this.getRole().name()));
+        return authorityList;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

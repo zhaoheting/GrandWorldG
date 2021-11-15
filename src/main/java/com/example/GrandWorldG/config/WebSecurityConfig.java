@@ -1,6 +1,6 @@
 package com.example.GrandWorldG.config;
 
-import com.example.GrandWorldG.service.impl.GrandWorldUserService;
+import com.example.GrandWorldG.service.impl.GrandWorldUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -10,8 +10,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 /**
  * Spring security config.
@@ -33,9 +32,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        super.configure(http);
         http.csrf().disable()//Or Cross-site request forgery will be enabled.
                 .authorizeRequests()
+                .antMatchers("/auth/**","/js/**","/css/**","/**Insertion").permitAll()//Or the js and css can't be used.
+//                .antMatchers("/index").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -57,29 +57,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        super.configure(auth);
         auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-//        super.configure(web);
-        //Permit some static resources.
-        web.ignoring().antMatchers("/auth/**", "/js/**", "/css/**");
-    }
-
-    /**
-     * Define a password encoder.
-     *
-     * @return
-     */
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        super.configure(web);
     }
 
     @Bean
-    protected UserDetailsService userDetailsService() {
-        return new GrandWorldUserService();
+    public NoOpPasswordEncoder passwordEncoder() {
+        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new GrandWorldUserDetailService();
     }
 }

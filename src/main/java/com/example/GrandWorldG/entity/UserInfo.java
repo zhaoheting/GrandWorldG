@@ -1,6 +1,5 @@
 package com.example.GrandWorldG.entity;
 
-import com.example.GrandWorldG.enums.UserRoleEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,12 +35,12 @@ public class UserInfo implements UserDetails {
 
     private String socialSecurityNumber;
 
-    private UserRoleEnum role;
+    private String roleName;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority(this.getRole().name()));
+        authorityList.add(new SimpleGrantedAuthority(this.getRoleName()));
         return authorityList;
     }
 

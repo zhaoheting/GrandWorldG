@@ -20,10 +20,13 @@ spring:
         connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
         use-global-data-source-stat: true
       driver-class-name: org.postgresql.Driver
-      password: postgres
+      password: POSTGRES
       username: postgres
       url: jdbc:postgresql://localhost:5432/postgres
       type: com.alibaba.druid.pool.DruidDataSource
+  thymeleaf:
+    prefix: classpath:/template/
+    suffix: .html
 #  devtools:
 #    restart:
 #      enabled: false#mybatis

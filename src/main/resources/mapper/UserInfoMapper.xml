@@ -11,30 +11,38 @@
         <result column="last_update_time" property="lastUpdateTime" jdbcType="TIMESTAMP"/>
         <result column="domain_Username" property="domainUsername" jdbcType="VARCHAR"/>
         <result column="social_security_number" property="socialSecurityNumber" jdbcType="VARCHAR"/>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
     </resultMap>
     <!-- parameterType of select can be a customized model or a primitive type. -->
-    <select id="selectUserInfoByUserId" parameterType="java.lang.Long" resultMap="userInfoModel">
-        select user_id,
-        username,
+    <select id="selectUserInfoByUsername" parameterType="java.lang.String" resultMap="userInfoModel">
+        select ui.user_id,
+        ui.username,
         <!-- Line below will throw an error when we use a postgre DB in version 13. But it runs correctly in version 14.-->
-        convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
-        create_time,
-        last_update_time,
-        domain_username,
-        social_security_number
-        from travel_fly.user_info
-        where user_id = #{userId,jdbcType=BIGINT}
+        convert_from(decrypt(ui.password::bytea,ui.domain_username::bytea,'AES'),'SQL_ASCII') password,
+        ui.create_time,
+        ui.last_update_time,
+        ui.domain_username,
+        ui.social_security_number,
+        ur.role_name
+        from travel_fly.user_info ui
+        left join travel_fly.user_role ur
+        on ui.role_id = ur.role_id
+        where username = #{username,jdbcType=VARCHAR}
     </select>
     <select id="selectAllUserInfo" resultMap="userInfoModel">
-        select user_id,
-        username,
+        select ui.user_id,
+        ui.username,
         <!--  Show how to use decryption function of postgre's extension pgcrypto.  -->
-        convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
-        create_time,
-        last_update_time,
-        domain_username,
-        social_security_number
-        from travel_fly.user_info
+        convert_from(decrypt(ui.password::bytea,ui.domain_username::bytea,'AES'),'SQL_ASCII') password,
+        ui.create_time,
+        ui.last_update_time,
+        ui.domain_username,
+        ui.social_security_number,
+        ur.role_name
+        from travel_fly.user_info ui
+        left join travel_fly.user_role ur
+        on ui.role_id = ur.role_id
+
     </select>
     <!--  jdbcType must be uppercase.  -->
     <!--  Column name of the primary key doesn't need to be written
@@ -43,7 +51,7 @@
     <insert id="insertUserInfo" keyProperty="userId" parameterType="UserInfo"
             useGeneratedKeys="true">
         insert into travel_fly.user_info
-        (username,password,create_time,last_update_time,domain_username,social_security_number)
+        (username,password,create_time,last_update_time,domain_username,social_security_number,role_id)
         values(
         #{username,jdbcType=VARCHAR},
         <!-- Show how to use encryption function of postgre's extension pgcrypto.
@@ -53,7 +61,8 @@
         current_timestamp,
         current_timestamp,
         #{domainUsername,jdbcType=VARCHAR},
-        #{socialSecurityNumber,jdbcType=VARCHAR}
+        #{socialSecurityNumber,jdbcType=VARCHAR},
+        (select role_id from travel_fly.user_role where role_name = #{roleName,jdbcType=VARCHAR})
         )
     </insert>
     <!--    <update id="" parameterType="">-->

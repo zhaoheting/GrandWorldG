@@ -38,4 +38,12 @@ public interface UserInfoMapper {
      * @return {@link int}
      */
     int insertUserInfo(UserInfo userInfo);
+
+    /*
+     * Get a user info by the username.
+     *
+     * @param userId
+     * @return {@link com.example.GrandWorldG.entity.UserInfo}
+     */
+    UserInfo selectUserInfoByUsername(@Param("username") String username);
 }

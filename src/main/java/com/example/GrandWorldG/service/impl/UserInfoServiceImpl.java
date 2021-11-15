@@ -7,6 +7,7 @@ import com.example.GrandWorldG.util.AesUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,6 +81,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param userInfo
      */
     private void encryptUserInfo(UserInfo userInfo) {
+//        userInfo.setPassword(new BCryptPasswordEncoder().encode(userInfo.getPassword()));
         userInfo.setSocialSecurityNumber(AesUtils.encryptInCbc(userInfo.getSocialSecurityNumber(), userInfo.getDomainUsername()));
     }
 

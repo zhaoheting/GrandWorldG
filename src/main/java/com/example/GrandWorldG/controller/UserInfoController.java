@@ -27,11 +27,6 @@ public class UserInfoController {
     @Autowired
     public UserInfoService userInfoService;
 
-    @GetMapping("/user/{userId}")
-    public UserInfo getUserById(@PathVariable("userId") Long userId) {
-        return userInfoService.getUserInfoByUserId(userId);
-    }
-
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
     public PageInfo<UserInfo> getAllUserInfoInPage(PageableModel<UserInfo> pageableModel) {

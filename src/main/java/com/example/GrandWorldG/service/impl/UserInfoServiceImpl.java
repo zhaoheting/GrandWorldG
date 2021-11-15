@@ -7,7 +7,7 @@ import com.example.GrandWorldG.util.AesUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,17 +25,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     private final UserInfoMapper userInfoMapper;
     private final SqlSessionFactory sqlSessionFactory;
     private final ConfigService configService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserInfoServiceImpl(UserInfoMapper userInfoMapper, SqlSessionFactory sqlSessionFactory,
-                               ConfigService configService) {
+                               ConfigService configService, PasswordEncoder passwordEncoder) {
         this.userInfoMapper = userInfoMapper;
         this.sqlSessionFactory = sqlSessionFactory;
         this.configService = configService;
-    }
-
-    @Override
-    public UserInfo getUserInfoByUserId(Long id) {
-        return userInfoMapper.selectUserInfoByUserId(id);
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -81,7 +78,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param userInfo
      */
     private void encryptUserInfo(UserInfo userInfo) {
-//        userInfo.setPassword(new BCryptPasswordEncoder().encode(userInfo.getPassword()));
+        userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         userInfo.setSocialSecurityNumber(AesUtils.encryptInCbc(userInfo.getSocialSecurityNumber(), userInfo.getDomainUsername()));
     }
 

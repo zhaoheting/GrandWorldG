@@ -35,6 +35,7 @@ public class UserInfo implements UserDetails {
 
     private String socialSecurityNumber;
 
+    //Role name in database must start with "ROLE_" to conform spring security standard.
     private String roleName;
 
     @Override

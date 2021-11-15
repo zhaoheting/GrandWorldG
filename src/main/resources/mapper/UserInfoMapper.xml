@@ -18,7 +18,8 @@
         select ui.user_id,
         ui.username,
         <!-- Line below will throw an error when we use a postgre DB in version 13. But it runs correctly in version 14.-->
-        convert_from(decrypt(ui.password::bytea,ui.domain_username::bytea,'AES'),'SQL_ASCII') password,
+        <!--    convert_from(decrypt(ui.password::bytea,ui.domain_username::bytea,'AES'),'SQL_ASCII') -->
+        ui.password,
         ui.create_time,
         ui.last_update_time,
         ui.domain_username,
@@ -33,7 +34,8 @@
         select ui.user_id,
         ui.username,
         <!--  Show how to use decryption function of postgre's extension pgcrypto.  -->
-        convert_from(decrypt(ui.password::bytea,ui.domain_username::bytea,'AES'),'SQL_ASCII') password,
+        <!-- convert_from(decrypt(ui.password::bytea,ui.domain_username::bytea,'AES'),'SQL_ASCII')-->
+        ui.password,
         ui.create_time,
         ui.last_update_time,
         ui.domain_username,
@@ -57,7 +59,8 @@
         <!-- Show how to use encryption function of postgre's extension pgcrypto.
         Here we use domain username as secret key.
         Aes is the encryption algorithm. -->
-        encrypt(#{password,jdbcType=VARCHAR}::bytea,#{domainUsername}::bytea,'AES'),
+        <!-- encrypt(#{password,jdbcType=VARCHAR}::bytea,#{domainUsername}::bytea,'AES'), -->
+        #{password,jdbcType=VARCHAR},
         current_timestamp,
         current_timestamp,
         #{domainUsername,jdbcType=VARCHAR},

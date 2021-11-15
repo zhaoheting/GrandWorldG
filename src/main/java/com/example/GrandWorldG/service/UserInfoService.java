@@ -13,14 +13,6 @@ import java.util.List;
 public interface UserInfoService {
 
     /*
-     * Get a user info by the user id.
-     *
-     * @param id User id.
-     * @return {@link com.example.GrandWorldG.entity.UserInfo}
-     */
-    UserInfo getUserInfoByUserId(Long id);
-
-    /*
      * Get info of all the users.
      *
      * @return {@link List<UserInfo>}

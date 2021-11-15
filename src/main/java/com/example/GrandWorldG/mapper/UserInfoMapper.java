@@ -17,14 +17,6 @@ import java.util.List;
 public interface UserInfoMapper {
 
     /*
-     * Get a user info by the user id.
-     *
-     * @param userId
-     * @return {@link com.example.GrandWorldG.entity.UserInfo}
-     */
-    UserInfo selectUserInfoByUserId(@Param("userId") Long userId);
-
-    /*
      * Get info of all the users.
      *
      * @return {@link java.util.List<com.example.GrandWorldG.entity.UserInfo>}

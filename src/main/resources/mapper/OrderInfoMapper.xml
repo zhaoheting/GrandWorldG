@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.GrandWorldG.mapper.OrderInfoMapper">
+    <!-- type of resultMap usually is a model customized by developer. -->
+    <resultMap id="OrderInfoModel" type="OrderInfo">
+        <!-- jdbcType of result is a data type of database. -->
+        <result column="order_id" property="orderId" jdbcType="BIGINT"/>
+      <result column="order_price" property="orderPrice" jdbcType="BIGINT"/>
+      <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+      <result column="user_id" property="userId" jdbcType="BIGINT"/>
+    </resultMap>
+    <!-- parameterType of select can be a customized model or a primitive type. -->
+    <select id="selectOrderInfoByUserId" parameterType="java.lang.Long" resultMap="OrderInfoModel">
+      select user_id, order_id, create_time, order_price
+      from travel_fly.order_info
+      where user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+</mapper>

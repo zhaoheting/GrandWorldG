@@ -12,12 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/*
+/**
  * Implementation of {@link UserInfoService}.
  *
  * @author HeTing.Zhao
  * @since 2021/10/17
- **/
+ */
 @Service
 public class UserInfoServiceImpl implements UserInfoService {
 

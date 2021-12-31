@@ -28,8 +28,16 @@ public class UserInfoController {
     public UserInfoService userInfoService;
 
     @GetMapping("/users")
-    @PreAuthorize("hasRole('ADMIN')")
     public PageInfo<UserInfo> getAllUserInfoInPage(PageableModel<UserInfo> pageableModel) {
+        PageHelper.startPage(pageableModel.getPageNum(), pageableModel.getPageSize());
+        List<UserInfo> userInfoList = userInfoService.getAllUserInfo();
+        PageInfo<UserInfo> pageInfo = new PageInfo<>(userInfoList);
+        return pageInfo;
+    }
+
+    @GetMapping("/usersAuth")
+    @PreAuthorize("hasRole('ADMIN')")
+    public PageInfo<UserInfo> getAllUserInfoInPageAuth(PageableModel<UserInfo> pageableModel) {
         PageHelper.startPage(pageableModel.getPageNum(), pageableModel.getPageSize());
         List<UserInfo> userInfoList = userInfoService.getAllUserInfo();
         PageInfo<UserInfo> pageInfo = new PageInfo<>(userInfoList);

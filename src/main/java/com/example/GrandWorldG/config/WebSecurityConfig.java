@@ -35,13 +35,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()//Or Cross-site request forgery will be enabled.
                 .authorizeRequests()
-                .antMatchers("/auth/**","/js/**","/css/**","/**Insertion").permitAll()//Or the js and css can't be used.
+                .antMatchers("/auth/**","/js/**","/css/**","/**Insertion","/users").permitAll()//Or the js and css can't be used.
 //                .antMatchers("/index").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/index")
+                .defaultSuccessUrl("/users")
                 .failureUrl("/login?error")
                 .permitAll()
                 .and()

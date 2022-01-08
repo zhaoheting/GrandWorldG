@@ -6,7 +6,6 @@ import com.example.GrandWorldG.service.UserInfoService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,8 +44,7 @@ public class UserInfoController {
     }
 
     @PostMapping("/userInsertion")
-    public UserInfo insertUserInfo(@RequestBody UserInfo userInfo) {
-        UserInfo insertedUser = userInfoService.insertUserInfo(userInfo);
-        return insertedUser;
+    public void insertUserInfo(@RequestBody UserInfo userInfo) {
+        userInfoService.insertUserInfo(userInfo);
     }
 }

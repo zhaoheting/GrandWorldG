@@ -6,11 +6,11 @@ import lombok.Setter;
 import java.sql.Timestamp;
 
 /**
- * TODO
+ * Order info entity.
  *
  * @author HeTing.Zhao
  * @since 2021/12/2
- **/
+ */
 @Getter
 @Setter
 public class OrderInfo {

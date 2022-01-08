@@ -12,7 +12,7 @@
     <!-- parameterType of select can be a customized model or a primitive type. -->
     <select id="selectOrderInfoByUserId" parameterType="java.lang.Long" resultMap="OrderInfoModel">
       select user_id, order_id, create_time, order_price
-      from travel_fly.order_info
+      from order_info
       where user_id = #{userId,jdbcType=BIGINT}
     </select>
 

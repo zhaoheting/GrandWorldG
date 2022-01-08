@@ -16,25 +16,23 @@
     <select id="selectUserInfoByUserId" parameterType="java.lang.Long" resultMap="userInfoModel">
         select user_id,
         username,
-        <!-- Line below will throw an error when we use a postgre DB in version 13. But it runs correctly in version 14.-->
-        convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
+        password,
         create_time,
         last_update_time,
         domain_username,
         social_security_number
-        from travel_fly.user_info
+        from user_info
         where user_id = #{userId,jdbcType=BIGINT}
     </select>
     <select id="selectAllUserInfo" resultMap="userInfoModel">
         select user_id,
         username,
-        <!--  Show how to use decryption function of postgre's extension pgcrypto.  -->
-        convert_from(decrypt(password::bytea,domain_username::bytea,'AES'),'SQL_ASCII') password,
+        password,
         create_time,
         last_update_time,
         domain_username,
         social_security_number
-        from travel_fly.user_info
+        from user_info
     </select>
     <!--  jdbcType must be uppercase.  -->
     <!--  Column name of the primary key doesn't need to be written
@@ -42,14 +40,11 @@
     <!--  The primary key of postgre database must be defined as "serial" or it can not be generated automatically.  -->
     <insert id="insertUserInfo" keyProperty="userId" parameterType="UserInfo"
             useGeneratedKeys="true">
-        insert into travel_fly.user_info
+        insert into user_info
         (username,password,create_time,last_update_time,domain_username,social_security_number)
         values(
         #{username,jdbcType=VARCHAR},
-        <!-- Show how to use encryption function of postgre's extension pgcrypto.
-        Here we use domain username as secret key.
-        Aes is the encryption algorithm. -->
-        encrypt(#{password,jdbcType=VARCHAR}::bytea,#{domainUsername}::bytea,'AES'),
+        #{password,jdbcType=VARCHAR},
         current_timestamp,
         current_timestamp,
         #{domainUsername,jdbcType=VARCHAR},

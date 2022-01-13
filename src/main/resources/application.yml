@@ -1,9 +1,9 @@
 server:
-  port: 8888
+  port: 8080
 spring:
   datasource:
       druid:
-        initial-size: 8
+        initial-size: 2
         min-idle: 1
         max-active: 20
         max-wait: 60000
@@ -11,13 +11,14 @@ spring:
         min-evictable-idle-timeMillis: 300000
         validation-query: select * FROM travel_fly.user_info
         test-while-idle: true
+        #testOnBorrow能够确保我们每次都能获取到可用的连接，但如果设置成true，则每次获取连接的时候都要到数据库验证连接有效性，这在高并发的时候会造成性能下降
         test-on-borrow: false
         test-on-return: false
         pool-prepared-statements: true
         max-open-prepared-statements: 20
         max-pool-prepared-statement-per-connection-size: 20
         filters: stat
-        connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+        connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=50000
         use-global-data-source-stat: true
       driver-class-name: com.mysql.cj.jdbc.Driver
       password: zhao535226554504
